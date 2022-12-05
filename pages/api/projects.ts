@@ -14,7 +14,7 @@ export default async function handler(
 ) {
 
   // your collection url
-  let orgUrl = "https://dev.azure.com/Digicel-DevOps";
+  let orgUrl = process.env.AZURE_ORG_URL!;
 
   let token: string = process.env.AZURE_PERSONAL_ACCESS_TOKEN!;
 

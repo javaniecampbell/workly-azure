@@ -14,10 +14,10 @@ export default async function handler(
     res: NextApiResponse<Data>
 ) {
 
-    const { id } = req.query;
+    const { author } = req.query;
 
     // your collection url
-    let orgUrl = "https://dev.azure.com/Digicel-DevOps";
+    let orgUrl = process.env.AZURE_ORG_URL!;
 
     let token: string = process.env.AZURE_PERSONAL_ACCESS_TOKEN!;
 
@@ -26,7 +26,7 @@ export default async function handler(
 
     // let workTrackingClient: workTracking.IWorkItemTrackingApi = await connection.getWorkItemTrackingApi();
     let gitClient: git.IGitApi = await connection.getGitApi();
-    let repository = await gitClient.getCommits(id as string, { author: "Javanie Campbell" }, "SD_Projects");
+    let repository = await gitClient.getCommits(author as string, { author: "Javanie Campbell" }, "SD_Projects");
     // get all commits for a user
     // const commits = gitClient.getCommits(repository.id!, { includeWorkItems: true })
 

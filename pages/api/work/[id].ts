@@ -17,7 +17,7 @@ export default async function handler(
     const { id } = req.query;
 
     // your collection url
-    let orgUrl = "https://dev.azure.com/Digicel-DevOps";
+    let orgUrl = process.env.AZURE_ORG_URL!;
 
     let token: string = process.env.AZURE_PERSONAL_ACCESS_TOKEN!;
 
