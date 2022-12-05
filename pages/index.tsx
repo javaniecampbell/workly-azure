@@ -1,6 +1,20 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import { interval, Observable, Observer } from "rxjs";
+import { useEffect } from "react";
+
+const source$ = interval(1000);
+
+function useSubsciption<T>(source$: Observable<T>, nextHandler: (value: T) => void) {
+  useEffect(() => {
+    const subscription = source$.subscribe(nextHandler);
+    return () => {
+      subscription.unsubscribe();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source$]);
+}
 
 export default function Home() {
   return (
