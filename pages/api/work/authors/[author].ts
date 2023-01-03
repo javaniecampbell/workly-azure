@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import * as azdev from "azure-devops-node-api";
 import * as workTracking from "azure-devops-node-api/WorkItemTrackingApi";
 import * as git from "azure-devops-node-api/GitApi";
+import {from, defer} from "rxjs"
 
 
 type Data = {
@@ -26,7 +27,8 @@ export default async function handler(
 
     // let workTrackingClient: workTracking.IWorkItemTrackingApi = await connection.getWorkItemTrackingApi();
     let gitClient: git.IGitApi = await connection.getGitApi();
-    let repository = await gitClient.getCommits(author as string, { author: "Javanie Campbell" }, "SD_Projects");
+    let repository$ = from(gitClient.getCommits(author as string, 
+        { author: "Javanie Campbell" }, "SD_Projects"));
     // get all commits for a user
     // const commits = gitClient.getCommits(repository.id!, { includeWorkItems: true })
 
@@ -34,5 +36,9 @@ export default async function handler(
     // let workItems = await workTrackingClient.getWorkItemsBatch({
 
     // })
-    res.status(200).json({ work: repository })
+ return repository$.subscribe((data) => {
+        return res.status(200).json({ work: data })
+        // console.log(data);
+    })
+    // res.status(200).json({ work: null })
 }
