@@ -22,7 +22,7 @@ function useObservable<T>(source$: Observable<T>, initialValue: T): T {
   return value;
 }
 
-export default function Home() {
+export default function Index() {
   const value = useObservable(source$, 0);
   return (
     <div className={styles.container}>
