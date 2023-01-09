@@ -6,7 +6,8 @@ enum CommitFields {
     Subject = "%7CirQ",
     Body = "kfq%5D",
     Authors = "_pws",
-    Branches = "%5DvEw"
+    Branches = "%5DvEw",
+    Message = ""
 }
 
 enum AuthorFields {
