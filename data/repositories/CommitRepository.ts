@@ -12,7 +12,7 @@ type Commit = {
     date: string;
     subject: string;
     body: string;
-    message: string;
+    message?: string;
     pageId?: string;
 }
 
@@ -109,13 +109,37 @@ class CommitRepository {
     }
 
     // get a commit by id
+    public async getCommitById(commitId: string): Promise<Commit> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.Commits,
+            filter: {
+                property: CommitFields.CommitId,
+                rich_text: {
+                    contains: commitId,
+                },
+            },
+        });
+        const page = response.results[0] as PageObjectResponse;
+        const commits = notionPropertiesById(page.properties) as any;
+
+        return {
+            commitId: commits[CommitFields.CommitId]?.rich_text[0]?.text?.content,
+            name: commits[CommitFields.Name]?.title[0]?.text?.content,
+            type: commits[CommitFields.Type]?.select?.id,
+            date: commits[CommitFields.Date]?.date?.start,
+            subject: commits[CommitFields.Subject]?.rich_text[0]?.text?.content,
+            body: commits[CommitFields.Body]?.rich_text[0]?.text?.content,
+            //message: commits[CommitFields.Message]?.rich_text[0]?.text?.content,
+            pageId: page.id,
+        };
+    }
 
     // get all commits
 
     // get commits by branch id
 
     // get commits by repository id
-    
+
     // get commits by user id
 
     // create a commit
