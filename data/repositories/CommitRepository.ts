@@ -135,6 +135,35 @@ class CommitRepository {
     }
 
     // get all commits
+    public async getAllCommits(): Promise<Commit[]> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.Commits,
+            filter: {
+                property: CommitFields.CommitId,
+                rich_text: {
+                    is_not_empty: true,
+                },
+            },
+        });
+        const pages = response.results as PageObjectResponse[];
+        const commits = pages.map((page) => {
+            const commit = notionPropertiesById(page.properties) as any;
+            return {
+                commitId: commit[CommitFields.CommitId]?.rich_text[0]?.text?.content,
+                name: commit[CommitFields.Name]?.title[0]?.text?.content,
+                type: commit[CommitFields.Type]?.select?.id,
+                date: commit[CommitFields.Date]?.date?.start,
+                subject: commit[CommitFields.Subject]?.rich_text[0]?.text?.content,
+                body: commit[CommitFields.Body]?.rich_text[0]?.text?.content,
+                //message: commit[CommitFields.Message]?.rich_text[0]?.text?.content,
+                pageId: page.id,
+            };
+        });
+
+        return commits;
+    }
+
+            
 
     // get commits by branch id
 
