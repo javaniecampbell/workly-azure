@@ -6,6 +6,7 @@ import {
 } from "@notionhq/client/build/src/api-endpoints";
 import { GetStaticProps, InferGetStaticPropsType, GetStaticPaths } from "next";
 import { ParsedUrlQuery } from "querystring";
+import AuthorsRepository from "../../data/repositories/AuthorsRepository";
 import notion, { getDatabase, listBlocks } from "../../utils/notion";
 
 interface StaticPageProps {
@@ -56,7 +57,10 @@ export const getStaticProps: GetStaticProps<
 > = async (context) => {
   const { id } = context.params as StaticPathParams;
   const response = await getDatabase(id);
-  console.log(response);
+  const repo = new AuthorsRepository();
+  const authors = await repo.getAuthorById('2345678765433456');
+ 
+  console.dir(authors, { depth: Infinity, colors: true });
   const database = response as DatabaseObjectResponse;
   return {
     props: {
