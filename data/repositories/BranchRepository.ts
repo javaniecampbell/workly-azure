@@ -2,6 +2,7 @@ import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import notion, { notionPropertiesById } from "../../utils/notion";
 import { BranchFields, RelationshipFields } from "../enums";
 
+// data type for a branch
 type Branch = {
     branchId: string;
     name: string;
@@ -14,6 +15,7 @@ type Branch = {
     // repository: string;
 }
 
+// create a branch entry
 const createBranchEntry = async (branch: Omit<Branch, "pageId">) => {
     const response = await notion.pages.create({
         parent: {
@@ -73,8 +75,10 @@ const createBranchEntry = async (branch: Omit<Branch, "pageId">) => {
             },
         }
     });
+    return response;
 };
 
+// class for branch repository
 class BranchRepository {
     constructor() {
 
@@ -101,7 +105,7 @@ class BranchRepository {
         });
         return branches;
     }
-    
+
     // Get a branch by its id
     public async getBranchById(branchId: string): Promise<Branch> {
         const response = await notion.databases.query({
@@ -136,4 +140,5 @@ class BranchRepository {
     }
 }
 
+// export the branch repository
 export default BranchRepository
