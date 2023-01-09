@@ -113,6 +113,34 @@ class WorkItemRepository {
 
     }
 
+    // get work item by id
+    async getWorkItemById(workItemId: string): Promise<WorkItem> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.WorkItems,
+            filter: {
+                property: WorkItemFields.WorkItemId,
+                rich_text: {
+                    equals: workItemId,
+                },
+            },
+        });
+        const currentWorkItem = notionPropertiesById((response.results[0] as PageObjectResponse).properties) as any;
+        const workItem: WorkItem = {
+            workItemId: currentWorkItem[WorkItemFields.WorkItemId]?.rich_text[0]?.plain_text,
+            name: currentWorkItem[WorkItemFields.Name]?.title[0]?.plain_text,
+            type: currentWorkItem[WorkItemFields.Type]?.select?.id,
+            size: currentWorkItem[WorkItemFields.Size]?.select?.id,
+            tags: currentWorkItem[WorkItemFields.Tags]?.rich_text[0]?.plain_text,
+            description: currentWorkItem[WorkItemFields.Description]?.rich_text[0]?.plain_text,
+            acceptanceCriteria: currentWorkItem[WorkItemFields.AcceptanceCriteria]?.rich_text[0]?.plain_text,
+            state: currentWorkItem[WorkItemFields.State]?.rich_text[0]?.plain_text,
+            points: currentWorkItem[WorkItemFields.Points]?.rich_text[0]?.plain_text,
+            pageId: response.results[0].id,
+        };
+        return workItem;
+    }
+
+
     // get all work items
     async getAllWorkItems(): Promise<WorkItem[]> {
         const response = await notion.databases.query({
