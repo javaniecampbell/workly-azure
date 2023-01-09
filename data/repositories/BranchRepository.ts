@@ -1,4 +1,5 @@
-import notion from "../../utils/notion";
+import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import notion, { notionPropertiesById } from "../../utils/notion";
 import { BranchFields, RelationshipFields } from "../enums";
 
 type Branch = {
@@ -79,7 +80,28 @@ class BranchRepository {
 
     }
 
-    
+    // Get a branch by its id
+    public async getBranchById(branchId: string): Promise<Branch> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.Branches,
+            filter: {
+                property: BranchFields.BranchId,
+                rich_text: {
+                    contains: branchId,
+                },
+            },
+        });
+        const branch = notionPropertiesById((response.results[0] as PageObjectResponse).properties) as any;
+        return {
+            branchId: branch[BranchFields.BranchId]?.rich_text[0]?.text?.content,
+            name: branch[BranchFields.Name]?.title[0]?.text?.content,
+            path: branch[BranchFields.Path]?.rich_text[0]?.text?.content,
+            branchCreatedOn: branch[BranchFields.BranchCreatedOn]?.date?.start,
+            removedOn: branch[BranchFields.RemovedOn]?.date?.start,
+            status: branch[BranchFields.Status]?.status?.id,
+            pageId: response.results[0]?.id,
+        };
+    }
 
     public async createBranch(branch: Branch): Promise<boolean> {
         try {
