@@ -78,6 +78,8 @@ enum RelationshipFields {
     Authors = "d8944d87-2103-459d-861b-a22e503df2d1",
     Branches = "c53c6873-5c32-4b81-9a43-c8e13ad720d3",
     Commits = "a291821a-8a7a-4f18-b7ba-6c41b89534ec",
+    WorkItems = "132e2f18-9e2e-44f5-a048-b5cd94cc0332",
+    Repositories = "095bc78e-b24b-4dc6-ba94-edbf40a78f4c"
 }
 
 export {
