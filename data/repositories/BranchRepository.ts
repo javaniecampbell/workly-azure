@@ -80,6 +80,28 @@ class BranchRepository {
 
     }
 
+
+
+    // Get all branches
+    public async getAllBranches(): Promise<Branch[]> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.Branches,
+        });
+        const branches = response.results.map((page) => {
+            const branch = notionPropertiesById((page as PageObjectResponse).properties) as any;
+            return {
+                branchId: branch[BranchFields.BranchId]?.rich_text[0]?.text?.content,
+                name: branch[BranchFields.Name]?.title[0]?.text?.content,
+                path: branch[BranchFields.Path]?.rich_text[0]?.text?.content,
+                branchCreatedOn: branch[BranchFields.BranchCreatedOn]?.date?.start,
+                removedOn: branch[BranchFields.RemovedOn]?.date?.start,
+                status: branch[BranchFields.Status]?.status?.id,
+                pageId: page.id,
+            };
+        });
+        return branches;
+    }
+    
     // Get a branch by its id
     public async getBranchById(branchId: string): Promise<Branch> {
         const response = await notion.databases.query({
