@@ -1,4 +1,5 @@
 // import notion client
+import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import notion, { notionPropertiesById } from "../../utils/notion";
 import { WorkItemFields, RelationshipFields } from "../enums";
 
@@ -110,6 +111,30 @@ const createWorkItemEntry = async (workItem: Omit<WorkItem, "pageId">) => {
 class WorkItemRepository {
     constructor() {
 
+    }
+
+    // get all work items
+    async getAllWorkItems(): Promise<WorkItem[]> {
+        const response = await notion.databases.query({
+            database_id: RelationshipFields.WorkItems,
+        });
+        const workItems: WorkItem[] = response.results.map((page) => {
+            const currentWorkItem = notionPropertiesById((page as PageObjectResponse).properties) as any;
+            const workItem: WorkItem = {
+                workItemId: currentWorkItem[WorkItemFields.WorkItemId]?.rich_text[0]?.plain_text,
+                name: currentWorkItem[WorkItemFields.Name]?.title[0]?.plain_text,
+                type: currentWorkItem[WorkItemFields.Type]?.select?.id,
+                size: currentWorkItem[WorkItemFields.Size]?.select?.id,
+                tags: currentWorkItem[WorkItemFields.Tags]?.rich_text[0]?.plain_text,
+                description: currentWorkItem[WorkItemFields.Description]?.rich_text[0]?.plain_text,
+                acceptanceCriteria: currentWorkItem[WorkItemFields.AcceptanceCriteria]?.rich_text[0]?.plain_text,
+                state: currentWorkItem[WorkItemFields.State]?.rich_text[0]?.plain_text,
+                points: currentWorkItem[WorkItemFields.Points]?.rich_text[0]?.plain_text,
+                pageId: page.id,
+            };
+            return workItem;
+        });
+        return workItems;
     }
 
     // create a work item return true if successful, false otherwise
