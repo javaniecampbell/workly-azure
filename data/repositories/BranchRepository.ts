@@ -90,6 +90,13 @@ class BranchRepository {
     public async getAllBranches(): Promise<Branch[]> {
         const response = await notion.databases.query({
             database_id: RelationshipFields.Branches,
+            filter: {
+                property: BranchFields.BranchId,
+                rich_text: {
+                    is_not_empty: true,
+                },
+            },
+                
         });
         const branches = response.results.map((page) => {
             const branch = notionPropertiesById((page as PageObjectResponse).properties) as any;

@@ -145,6 +145,12 @@ class WorkItemRepository {
     async getAllWorkItems(): Promise<WorkItem[]> {
         const response = await notion.databases.query({
             database_id: RelationshipFields.WorkItems,
+            filter: {
+                property: WorkItemFields.WorkItemId,
+                rich_text: {
+                    is_not_empty: true,
+                },
+            },
         });
         const workItems: WorkItem[] = response.results.map((page) => {
             const currentWorkItem = notionPropertiesById((page as PageObjectResponse).properties) as any;
